@@ -1,0 +1,79 @@
+package authors;
+
+public class Author {
+    // Поля данных класса (private)
+    private String name;      // имя автора
+    private String email;     // электронная почта
+    private char gender;      // 'M', 'F' или 'U'
+
+    // Конструктор
+    // Конструктора по умолчанию нет — все три поля обязательны
+    public Author(String name, String email, char gender) {
+        this.name = name;
+        this.email = email;
+        this.gender = gender;
+    }
+
+    // Геттеры
+    public String getName() {
+        return name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public char getGender() {
+        return gender;
+    }
+
+    // Сеттер только для email
+    // Для name и gender сеттеров нет — эти поля неизменяемы
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    // toString
+    // Формат: "имя (пол) at email"
+    @Override
+    public String toString() {
+        return name + " (" + gender + ") at " + email;
+    }
+}
+
+package authors;
+
+public class TestAuthor {
+    public static void main(String[] args) {
+
+        // 1. Создаём первого автора — мужчину
+        Author ahTeck = new Author("Tan Ah Teck", "ahTeck@somewhere.com", 'm');
+        System.out.println(ahTeck);   // Java сама вызовет toString()
+
+        // 2. Проверяем работу геттеров
+        System.out.println("Имя: " + ahTeck.getName());
+        System.out.println("Email: " + ahTeck.getEmail());
+        System.out.println("Пол: " + ahTeck.getGender());
+
+        // 3. Меняем email через сеттер
+        ahTeck.setEmail("ahTeck@newmail.com");
+        System.out.println("После изменения email:");
+        System.out.println(ahTeck);
+
+        // 4. Создаём второго автора — женщину
+        Author sue = new Author("Sue Grant", "suGrant@somewhere.com", 'f');
+        System.out.println(sue);
+
+        // 5. Создаём третьего автора — пол неизвестен
+        Author unknown = new Author("Unknown Writer", "unknown@mail.com", 'u');
+        System.out.println(unknown);
+
+        // 6. Разделительная строка для наглядности
+        System.out.println("----------------------------------------");
+
+        // 7. Проверка на то, что name и gender нельзя изменить:
+        //    следующий код не скомпилируется, так как сеттеров нет:
+        // ahTeck.setName("New Name");      // ошибка компиляции
+        // ahTeck.setGender('f');           // ошибка компиляции
+    }
+}
