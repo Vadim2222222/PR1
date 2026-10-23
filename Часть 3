@@ -1,0 +1,454 @@
+package shape;
+
+public class Circle extends Shape {
+    protected double radius;
+
+    // Конструктор по умолчанию
+    public Circle() {
+        super();              // вызывает Shape() — цвет "blue", filled false
+        this.radius = 1.0;
+    }
+
+    // Конструктор с радиусом
+    public Circle(double radius) {
+        super();              // цвет "blue", filled false
+        this.radius = radius;
+    }
+
+    // Полный конструктор
+    public Circle(double radius, String color, boolean filled) {
+        super(color, filled);
+        this.radius = radius;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
+    @Override
+    public double getArea() {
+        return Math.PI * radius * radius;
+    }
+
+    @Override
+    public double getPerimeter() {
+        return 2 * Math.PI * radius;
+    }
+
+    @Override
+    public String toString() {
+        return "Circle[radius=" + radius + ", " + super.toString() + "]";
+    }
+}
+
+package shape;
+
+public interface Movable {
+    void moveUp();
+    void moveDown();
+    void moveLeft();
+    void moveRight();
+}
+
+package shape;
+
+public class MovableCircle implements Movable {
+    private int radius;
+    private MovablePoint center;   // агрегация: окружность содержит точку
+
+    public MovableCircle(int x, int y, int xSpeed, int ySpeed, int radius) {
+        this.center = new MovablePoint(x, y, xSpeed, ySpeed);
+        this.radius = radius;
+    }
+
+    @Override
+    public String toString() {
+        return "MovableCircle[center=" + center + ", radius=" + radius + "]";
+    }
+
+    // Делегируем движение центру — окружность двигается вместе с ним
+    @Override
+    public void moveUp() {
+        center.moveUp();
+    }
+
+    @Override
+    public void moveDown() {
+        center.moveDown();
+    }
+
+    @Override
+    public void moveLeft() {
+        center.moveLeft();
+    }
+
+    @Override
+    public void moveRight() {
+        center.moveRight();
+    }
+}
+
+package shape;
+
+public class MovablePoint implements Movable {
+    private int x;
+    private int y;
+    private int xSpeed;
+    private int ySpeed;
+
+    public MovablePoint(int x, int y, int xSpeed, int ySpeed) {
+        this.x = x;
+        this.y = y;
+        this.xSpeed = xSpeed;
+        this.ySpeed = ySpeed;
+    }
+
+    // Геттеры — полезно для проверки скорости в MovableRectangle
+    public int getX() { return x; }
+    public int getY() { return y; }
+    public int getXSpeed() { return xSpeed; }
+    public int getYSpeed() { return ySpeed; }
+
+    @Override
+    public String toString() {
+        return "(" + x + ", " + y + ") speed=(" + xSpeed + ", " + ySpeed + ")";
+    }
+
+    @Override
+    public void moveUp() {
+        y -= ySpeed;   // вверх по экрану — уменьшение y
+    }
+
+    @Override
+    public void moveDown() {
+        y += ySpeed;
+    }
+
+    @Override
+    public void moveLeft() {
+        x -= xSpeed;
+    }
+
+    @Override
+    public void moveRight() {
+        x += xSpeed;
+    }
+}
+
+package shape;
+
+public class MovableRectangle implements Movable {
+    private MovablePoint topLeft;
+    private MovablePoint bottomRight;
+
+    public MovableRectangle(int x1, int y1, int x2, int y2,
+                            int xSpeed, int ySpeed) {
+        this.topLeft     = new MovablePoint(x1, y1, xSpeed, ySpeed);
+        this.bottomRight = new MovablePoint(x2, y2, xSpeed, ySpeed);
+    }
+
+    // Проверка: скорости обеих точек совпадают
+    private boolean isSpeedEqual() {
+        return topLeft.getXSpeed() == bottomRight.getXSpeed()
+                && topLeft.getYSpeed() == bottomRight.getYSpeed();
+    }
+
+    @Override
+    public void moveUp() {
+        if (!isSpeedEqual()) return;    // либо throw new IllegalStateException(...)
+        topLeft.moveUp();
+        bottomRight.moveUp();
+    }
+
+    @Override
+    public void moveDown() {
+        if (!isSpeedEqual()) return;
+        topLeft.moveDown();
+        bottomRight.moveDown();
+    }
+
+    @Override
+    public void moveLeft() {
+        if (!isSpeedEqual()) return;
+        topLeft.moveLeft();
+        bottomRight.moveLeft();
+    }
+
+    @Override
+    public void moveRight() {
+        if (!isSpeedEqual()) return;
+        topLeft.moveRight();
+        bottomRight.moveRight();
+    }
+
+    @Override
+    public String toString() {
+        return "MovableRectangle[topLeft=" + topLeft
+                + ", bottomRight=" + bottomRight + "]";
+    }
+}
+
+package shape;
+
+public class Rectangle extends Shape {
+    protected double width;
+    protected double length;
+
+    public Rectangle() {
+        super();
+        this.width = 1.0;
+        this.length = 1.0;
+    }
+
+    public Rectangle(double width, double length) {
+        super();
+        this.width = width;
+        this.length = length;
+    }
+
+    public Rectangle(double width, double length, String color, boolean filled) {
+        super(color, filled);
+        this.width = width;
+        this.length = length;
+    }
+
+    public double getWidth() {
+        return width;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public double getLength() {
+        return length;
+    }
+
+    public void setLength(double length) {
+        this.length = length;
+    }
+
+    @Override
+    public double getArea() {
+        return width * length;
+    }
+
+    @Override
+    public double getPerimeter() {
+        return 2 * (width + length);
+    }
+
+    @Override
+    public String toString() {
+        return "Rectangle[width=" + width + ", length=" + length
+                + ", " + super.toString() + "]";
+    }
+}
+
+package shape;
+
+public abstract class Shape {
+    // protected — доступны в подклассах
+    protected String color;
+    protected boolean filled;
+
+    // Конструктор по умолчанию
+    public Shape() {
+        this.color = "blue";
+        this.filled = false;
+    }
+
+    // Конструктор с параметрами
+    public Shape(String color, boolean filled) {
+        this.color = color;
+        this.filled = filled;
+    }
+
+    // Геттеры и сеттеры
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    public boolean isFilled() {
+        return filled;
+    }
+
+    public void setFilled(boolean filled) {
+        this.filled = filled;
+    }
+
+    // Абстрактные методы — без тела
+    public abstract double getArea();
+    public abstract double getPerimeter();
+
+    @Override
+    public String toString() {
+        return "Shape[color=" + color + ", filled=" + filled + "]";
+    }
+}
+
+package shape;
+
+public class Square extends Rectangle {
+
+    // Конструктор по умолчанию — сторона 1.0
+    public Square() {
+        super(1.0, 1.0);
+    }
+
+    // Конструктор только со стороной
+    public Square(double side) {
+        super(side, side);
+    }
+
+    // Полный конструктор
+    public Square(double side, String color, boolean filled) {
+        super(side, side, color, filled);
+    }
+
+    public double getSide() {
+        return width;   // width == length для квадрата
+    }
+
+    public void setSide(double side) {
+        this.width = side;
+        this.length = side;
+    }
+
+    // Переопределяем setWidth и setLength,
+    // чтобы при изменении одной стороны менялась и другая
+    @Override
+    public void setWidth(double side) {
+        this.width = side;
+        this.length = side;
+    }
+
+    @Override
+    public void setLength(double side) {
+        this.width = side;
+        this.length = side;
+    }
+
+    @Override
+    public String toString() {
+        return "Square[side=" + width + ", " + super.toString() + "]";
+    }
+}
+
+package shape;
+
+public class TestMovable {
+    public static void main(String[] args) {
+        // ---- MovablePoint ----
+        MovablePoint p = new MovablePoint(0, 0, 2, 3);
+        System.out.println("Начало: " + p);
+
+        p.moveUp();
+        System.out.println("После moveUp:    " + p);
+
+        p.moveDown();
+        p.moveDown();
+        System.out.println("После двух moveDown: " + p);
+
+        p.moveRight();
+        p.moveRight();
+        p.moveRight();
+        System.out.println("После трёх moveRight: " + p);
+
+        p.moveLeft();
+        System.out.println("После moveLeft:  " + p);
+
+        // ---- MovableCircle ----
+        MovableCircle c = new MovableCircle(10, 10, 5, 5, 4);
+        System.out.println("\nОкружность: " + c);
+
+        c.moveUp();
+        c.moveRight();
+        System.out.println("После moveUp + moveRight: " + c);
+
+        // Полиморфизм: через интерфейс Movable
+        Movable m = c;
+        m.moveDown();
+        System.out.println("Через Movable: " + m);
+        // ---- MovableRectangle ----
+        MovableRectangle rect = new MovableRectangle(0, 0, 10, 5, 2, 2);
+        System.out.println("\nПрямоугольник: " + rect);
+
+        rect.moveUp();
+        rect.moveRight();
+        System.out.println("После moveUp + moveRight: " + rect);
+    }
+}
+
+package shape;
+
+public class TestShape {
+    public static void main(String[] args) {
+
+        // ---- Circle как Shape (upcast) ----
+        Shape s1 = new Circle(5.5, "RED", false);
+        System.out.println(s1);                    // toString() из Circle
+        System.out.println(s1.getArea());          // площадь круга
+        System.out.println(s1.getPerimeter());     // периметр круга
+        System.out.println(s1.getColor());
+        System.out.println(s1.isFilled());
+        // System.out.println(s1.getRadius());     // ОШИБКА: у Shape нет getRadius()
+
+        // ---- Downcast обратно к Circle ----
+        Circle c1 = (Circle) s1;
+        System.out.println(c1);
+        System.out.println(c1.getArea());
+        System.out.println(c1.getPerimeter());
+        System.out.println(c1.getColor());
+        System.out.println(c1.isFilled());
+        System.out.println(c1.getRadius());
+
+        // ---- Shape абстрактный: нельзя создать объект ----
+        // Shape s2 = new Shape();  // ОШИБКА компиляции
+
+        // ---- Rectangle как Shape ----
+        Shape s3 = new Rectangle(1.0, 2.0, "RED", false);
+        System.out.println(s3);
+        System.out.println(s3.getArea());
+        System.out.println(s3.getPerimeter());
+        System.out.println(s3.getColor());
+        // System.out.println(s3.getLength());     // ОШИБКА: у Shape нет getLength()
+
+        // ---- Downcast к Rectangle ----
+        Rectangle r1 = (Rectangle) s3;
+        System.out.println(r1);
+        System.out.println(r1.getArea());
+        System.out.println(r1.getColor());
+        System.out.println(r1.getLength());
+
+        // ---- Square как Shape ----
+        Shape s4 = new Square(6.6);
+        System.out.println(s4);
+        System.out.println(s4.getArea());
+        System.out.println(s4.getColor());
+        // System.out.println(s4.getSide());       // ОШИБКА: у Shape нет getSide()
+
+        // ---- Downcast Shape -> Rectangle (Square является Rectangle) ----
+        Rectangle r2 = (Rectangle) s4;
+        System.out.println(r2);
+        System.out.println(r2.getArea());
+        System.out.println(r2.getColor());
+        // System.out.println(r2.getSide());       // ОШИБКА: у Rectangle нет getSide()
+
+        // ---- Downcast Rectangle -> Square ----
+        Square sq1 = (Square) r2;
+        System.out.println(sq1);
+        System.out.println(sq1.getArea());
+        System.out.println(sq1.getColor());
+        System.out.println(sq1.getSide());
+        System.out.println(sq1.getLength());       // унаследован от Rectangle
+    }
+}
