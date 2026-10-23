@@ -1,0 +1,664 @@
+package clothing;
+
+public class Atelier {
+
+    // Одеть женщину — обрабатываем только женскую одежду
+    public static void dressWomen(Clothes[] clothes) {
+        System.out.println("\nЖенская одежда");
+        for (Clothes c : clothes) {
+            if (c instanceof WomenClothing) {
+                ((WomenClothing) c).dressWomen();
+            }
+        }
+    }
+
+    // Одеть мужчину — обрабатываем только мужскую одежду
+    public static void dressMan(Clothes[] clothes) {
+        System.out.println("\nМужская одежда");
+        for (Clothes c : clothes) {
+            if (c instanceof MenClothing) {
+                ((MenClothing) c).dressMan();
+            }
+        }
+    }
+}
+
+package clothing;
+
+public abstract class Clothes {
+    protected Size size;
+    protected double cost;
+    protected String color;
+
+    public Clothes(Size size, double cost, String color) {
+        this.size = size;
+        this.cost = cost;
+        this.color = color;
+    }
+
+    public Size getSize() { return size; }
+    public double getCost() { return cost; }
+    public String getColor() { return color; }
+
+    @Override
+    public String toString() {
+        return "размер=" + size +
+                " (евро " + size.getEuroSize() + ", " + size.getDescription() + ")" +
+                ", цена=" + cost +
+                ", цвет=" + color;
+    }
+}
+
+package clothing;
+
+public interface MenClothing {
+    void dressMan();
+}
+
+package clothing;
+
+public class Pants extends Clothes implements MenClothing, WomenClothing {
+    public Pants(Size size, double cost, String color) {
+        super(size, cost, color);
+    }
+
+    @Override
+    public void dressMan() {
+        System.out.println("Мужские штаны: " + this);
+    }
+
+    @Override
+    public void dressWomen() {
+        System.out.println("Женские штаны: " + this);
+    }
+}
+
+package clothing;
+
+public enum Size {
+    XXS(32) {
+        @Override
+        public String getDescription() {
+            return "Детский размер";
+        }
+    },
+    XS(34),
+    S(36),
+    M(38),
+    L(40);
+
+    private final int euroSize;
+
+    Size(int euroSize) {
+        this.euroSize = euroSize;
+    }
+
+    public int getEuroSize() {
+        return euroSize;
+    }
+
+    public String getDescription() {
+        return "Взрослый размер";
+    }
+}
+
+package clothing;
+
+public class Skirt extends Clothes implements WomenClothing {
+    public Skirt(Size size, double cost, String color) {
+        super(size, cost, color);
+    }
+
+    @Override
+    public void dressWomen() {
+        System.out.println("Юбка: " + this);
+    }
+}
+
+package clothing;
+
+public class TestClothing {
+    public static void main(String[] args) {
+
+        // 1. Массив всех типов одежды
+        Clothes[] clothes = {
+                new TShirt(Size.M, 1500.0, "белый"),
+                new Pants(Size.L, 3000.0, "чёрный"),
+                new Skirt(Size.S, 2500.0, "красный"),
+                new Tie(Size.XS, 800.0, "синий"),
+                new TShirt(Size.XXS, 1000.0, "детский голубой")
+        };
+
+        // 2. Одеть женщин и мужчин
+        Atelier.dressWomen(clothes);
+        Atelier.dressMan(clothes);
+
+        // 3. Дополнительно: показать все размеры с описанием
+        System.out.println("\nРазмеры одежды");
+        for (Size s : Size.values()) {
+            System.out.println(s + " — евро " + s.getEuroSize()
+                    + ", " + s.getDescription());
+        }
+    }
+}
+
+package clothing;
+
+public class Tie extends Clothes implements MenClothing {
+    public Tie(Size size, double cost, String color) {
+        super(size, cost, color);
+    }
+
+    @Override
+    public void dressMan() {
+        System.out.println("Галстук: " + this);
+    }
+}
+
+package clothing;
+
+public class TShirt extends Clothes implements MenClothing, WomenClothing {
+
+    // Конструктор — передаём параметры в конструктор родителя Clothes
+    public TShirt(Size size, double cost, String color) {
+        super(size, cost, color);
+    }
+
+    // Реализация метода из интерфейса MenClothing
+    @Override
+    public void dressMan() {
+        System.out.println("Мужская футболка: " + this);
+    }
+
+    // Реализация метода из интерфейса WomenClothing
+    @Override
+    public void dressWomen() {
+        System.out.println("Женская футболка: " + this);
+    }
+}
+
+package clothing;
+
+public interface WomenClothing {
+    void dressWomen();
+}
+
+package computer;
+
+public enum Brand {
+    APPLE,
+    DELL,
+    HP,
+    LENOVO,
+    ASUS,
+    ACER,
+    MSI
+}
+
+package computer;
+
+public class Computer {
+    // Поля-компоненты
+    private Brand brand;          // марка (enum)
+    private Processor processor;  // процессор
+    private Memory memory;        // память
+    private Monitor monitor;      // монитор
+
+    // Конструктор
+    public Computer(Brand brand, Processor processor,
+                    Memory memory, Monitor monitor) {
+        this.brand = brand;
+        this.processor = processor;
+        this.memory = memory;
+        this.monitor = monitor;
+    }
+
+    // Геттеры
+    public Brand getBrand() { return brand; }
+    public Processor getProcessor() { return processor; }
+    public Memory getMemory() { return memory; }
+    public Monitor getMonitor() { return monitor; }
+
+    // Полезные методы
+
+    // Общая «мощность» — сумма ядер × частота (простая эвристика)
+    public double getPerformanceScore() {
+        return processor.getCores() * processor.getFrequencyGHz();
+    }
+
+    // Проверка: подходит ли для современных игр (простая эвристика)
+    public boolean isGamingReady() {
+        return processor.getCores() >= 8
+                && processor.getFrequencyGHz() >= 3.0
+                && memory.getSizeGB() >= 16;
+    }
+
+    @Override
+    public String toString() {
+        return "Компьютер " + brand + ":\n"
+                + "  " + processor + "\n"
+                + "  " + memory + "\n"
+                + "  " + monitor;
+    }
+}
+
+package computer;
+
+public class Memory {
+    private int sizeGB;     // объём в гигабайтах
+    private String type;    // тип: "DDR4", "DDR5", "LPDDR5"
+
+    public Memory(int sizeGB, String type) {
+        this.sizeGB = sizeGB;
+        this.type = type;
+    }
+
+    public int getSizeGB() { return sizeGB; }
+    public String getType() { return type; }
+
+    @Override
+    public String toString() {
+        return "Память[" + sizeGB + " GB " + type + "]";
+    }
+}
+
+package computer;
+
+public class Monitor {
+    private double diagonalInch;   // диагональ в дюймах
+    private String resolution;     // разрешение: "1920x1080"
+    private String panelType;      // тип матрицы: "IPS", "OLED"
+
+    public Monitor(double diagonalInch, String resolution, String panelType) {
+        this.diagonalInch = diagonalInch;
+        this.resolution = resolution;
+        this.panelType = panelType;
+    }
+
+    public double getDiagonalInch() { return diagonalInch; }
+    public String getResolution() { return resolution; }
+    public String getPanelType() { return panelType; }
+
+    @Override
+    public String toString() {
+        return "Монитор[" + diagonalInch + "\", " + resolution
+                + ", " + panelType + "]";
+    }
+}
+
+package computer;
+
+public class Processor {
+    private String model;          // модель (например, "Intel Core i7")
+    private double frequencyGHz;   // тактовая частота в ГГц
+    private int cores;             // количество ядер
+
+    public Processor(String model, double frequencyGHz, int cores) {
+        this.model = model;
+        this.frequencyGHz = frequencyGHz;
+        this.cores = cores;
+    }
+
+    public String getModel() { return model; }
+    public double getFrequencyGHz() { return frequencyGHz; }
+    public int getCores() { return cores; }
+
+    @Override
+    public String toString() {
+        return "Процессор[" + model + ", " + frequencyGHz + " ГГц, "
+                + cores + " ядер]";
+    }
+}
+
+package computer;
+
+public class TestComputer {
+    public static void main(String[] args) {
+
+        // Компьютер 1: мощный игровой
+        Processor cpu1 = new Processor("Intel Core i9-13900K", 3.0, 24);
+        Memory ram1 = new Memory(32, "DDR5");
+        Monitor mon1 = new Monitor(27.0, "2560x1440", "IPS");
+
+        Computer gamingPC = new Computer(Brand.ASUS, cpu1, ram1, mon1);
+
+        System.out.println("Компьютер 1");
+        System.out.println(gamingPC);
+        System.out.println("Оценка мощности: " + gamingPC.getPerformanceScore());
+        System.out.println("Подходит для игр: " + gamingPC.isGamingReady());
+
+        // Компьютер 2: офисный ноутбук
+        Processor cpu2 = new Processor("Intel Core i5-1235U", 1.3, 10);
+        Memory ram2 = new Memory(8, "DDR4");
+        Monitor mon2 = new Monitor(15.6, "1920x1080", "IPS");
+
+        Computer officeLaptop = new Computer(Brand.LENOVO, cpu2, ram2, mon2);
+
+        System.out.println("\nКомпьютер 2");
+        System.out.println(officeLaptop);
+        System.out.println("Оценка мощности: " + officeLaptop.getPerformanceScore());
+        System.out.println("Подходит для игр: " + officeLaptop.isGamingReady());
+
+        // Компьютер 3: Apple MacBook
+        Computer macBook = new Computer(
+                Brand.APPLE,
+                new Processor("Apple M2", 3.5, 8),
+                new Memory(16, "LPDDR5"),
+                new Monitor(13.6, "2560x1664", "Liquid Retina")
+        );
+
+        System.out.println("\nКомпьютер 3");
+        System.out.println(macBook);
+        System.out.println("Оценка мощности: " + macBook.getPerformanceScore());
+        System.out.println("Подходит для игр: " + macBook.isGamingReady());
+
+        // Демонстрация доступа к компонентам
+        System.out.println("\nДетали компьютера 1");
+        System.out.println("Марка: " + gamingPC.getBrand());
+        System.out.println("Модель процессора: " + gamingPC.getProcessor().getModel());
+        System.out.println("Объём памяти: " + gamingPC.getMemory().getSizeGB() + " ГБ");
+        System.out.println("Диагональ монитора: " + gamingPC.getMonitor().getDiagonalInch() + "\"");
+    }
+}
+
+package seasons;
+
+public enum Season {
+    WINTER(-10) {
+        // По умолчанию — "Холодное время года", ничего не меняем
+    },
+    SPRING(10) {
+        // По умолчанию
+    },
+    SUMMER(25) {
+        @Override
+        public String getDescription() {
+            return "Теплое время года";
+        }
+    },
+    AUTUMN(8) {
+        // По умолчанию
+    };
+
+    private final int averageTemperature;
+
+    Season(int averageTemperature) {
+        this.averageTemperature = averageTemperature;
+    }
+
+    public int getAverageTemperature() {
+        return averageTemperature;
+    }
+
+    public String getDescription() {
+        return "Холодное время года";
+    }
+}
+
+package seasons;
+
+public class TestSeason {
+    public static void main(String[] args) {
+
+        // 1. Переменная с любимым временем года
+        Season favorite = Season.SUMMER;
+        System.out.println("Моё любимое время года: " + favorite);
+        System.out.println("Средняя температура: " + favorite.getAverageTemperature() + "°C");
+        System.out.println("Описание: " + favorite.getDescription());
+
+        // 2. Метод со switch
+        System.out.println("\n=== Проверка switch ===");
+        for (Season s : Season.values()) {
+            printSeasonMessage(s);
+        }
+
+        // 3. Цикл по всем временам года с температурой и описанием
+        System.out.println("\n=== Все времена года ===");
+        for (Season s : Season.values()) {
+            System.out.printf("%-8s | %3d°C | %s%n",
+                    s, s.getAverageTemperature(), s.getDescription());
+        }
+    }
+
+    // Метод со switch: если лето — "Я люблю лето" и т.д.
+    public static void printSeasonMessage(Season season) {
+        switch (season) {
+            case WINTER:
+                System.out.println("Зима: " + season.getDescription());
+                break;
+            case SPRING:
+                System.out.println("Весна: " + season.getDescription());
+                break;
+            case SUMMER:
+                System.out.println("Я люблю лето! " + season.getDescription());
+                break;
+            case AUTUMN:
+                System.out.println("Осень: " + season.getDescription());
+                break;
+        }
+    }
+}
+
+package shop;
+
+public enum Category {
+    ELECTRONICS,   // Электроника
+    BOOKS,         // Книги
+    CLOTHING       // Одежда
+}
+
+package shop;
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        Shop shop = new Shop();
+
+        // 1. АУТЕНТИФИКАЦИЯ
+        User user = new User("admin", "1234");
+        System.out.println("Вход в интернет-магазин");
+        System.out.print("Логин: ");
+        String login = sc.nextLine();
+        System.out.print("Пароль: ");
+        String pwd = sc.nextLine();
+
+        if (!login.equals(user.getLogin()) || !user.checkPassword(pwd)) {
+            System.out.println("Неверный логин или пароль. Выход.");
+            sc.close();
+            return;
+        }
+        System.out.println("Добро пожаловать, " + login + "!\n");
+
+        // ОСНОВНОЙ ЦИКЛ
+        while (true) {
+            System.out.println("\nМеню");
+            System.out.println("1. Категории товаров");
+            System.out.println("2. Товары категории");
+            System.out.println("3. Добавить товар в корзину");
+            System.out.println("4. Показать корзину");
+            System.out.println("5. Купить");
+            System.out.println("0. Выход");
+            System.out.print("Ваш выбор: ");
+
+            int choice;
+            try {
+                choice = Integer.parseInt(sc.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Ошибка: введите число.");
+                continue;
+            }
+
+            switch (choice) {
+                case 1:
+                    shop.showCategories();
+                    break;
+
+                case 2:
+                    shop.showCategories();
+                    System.out.print("Введите название категории: ");
+                    String catName = sc.nextLine().trim().toUpperCase();
+                    try {
+                        Category c = Category.valueOf(catName);
+                        shop.showProducts(c);
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Такой категории нет. Попробуйте: "
+                                + java.util.Arrays.toString(Category.values()));
+                    }
+                    break;
+
+                case 3:
+                    System.out.print("Введите название товара: ");
+                    String productName = sc.nextLine().trim();
+                    Product p = shop.findProduct(productName);
+                    if (p != null) {
+                        shop.addToCart(p);
+                    } else {
+                        System.out.println("Товар не найден.");
+                    }
+                    break;
+
+                case 4:
+                    shop.showCart();
+                    break;
+
+                case 5:
+                    shop.checkout();
+                    break;
+
+                case 0:
+                    System.out.println("До свидания!");
+                    sc.close();
+                    return;
+
+                default:
+                    System.out.println("Неверный выбор. Введите число от 0 до 5.");
+            }
+        }
+    }
+}
+
+package shop;
+
+public class Product {
+    private String name;          // название
+    private double price;         // цена
+    private Category category;    // категория
+
+    public Product(String name, double price, Category category) {
+        this.name = name;
+        this.price = price;
+        this.category = category;
+    }
+
+    public String getName() { return name; }
+    public double getPrice() { return price; }
+    public Category getCategory() { return category; }
+
+    @Override
+    public String toString() {
+        return name + " — " + price + " руб. [" + category + "]";
+    }
+}
+
+package shop;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Shop {
+    private List<Product> products = new ArrayList<>();   // каталог
+    private List<Product> cart = new ArrayList<>();       // корзина
+
+    // Конструктор заполняет каталог тестовыми товарами
+    public Shop() {
+        products.add(new Product("Смартфон", 25000, Category.ELECTRONICS));
+        products.add(new Product("Ноутбук", 60000, Category.ELECTRONICS));
+        products.add(new Product("Наушники", 3000, Category.ELECTRONICS));
+        products.add(new Product("Роман «Мастер и Маргарита»", 800, Category.BOOKS));
+        products.add(new Product("Учебник Java", 1500, Category.BOOKS));
+        products.add(new Product("Футболка", 1200, Category.CLOTHING));
+        products.add(new Product("Джинсы", 3500, Category.CLOTHING));
+    }
+
+    // 1. Показать все категории
+    public void showCategories() {
+        System.out.println("Доступные категории:");
+        for (Category c : Category.values()) {
+            System.out.println("  • " + c);
+        }
+    }
+
+    // 2. Показать товары в категории
+    public void showProducts(Category category) {
+        System.out.println("Товары в категории " + category + ":");
+        boolean found = false;
+        for (Product p : products) {
+            if (p.getCategory() == category) {
+                System.out.println("  " + p);
+                found = true;
+            }
+        }
+        if (!found) System.out.println("  (товаров нет)");
+    }
+
+    // 3. Найти товар по названию
+    public Product findProduct(String name) {
+        for (Product p : products) {
+            if (p.getName().equalsIgnoreCase(name)) return p;
+        }
+        return null;
+    }
+
+    // 4. Добавить в корзину
+    public void addToCart(Product p) {
+        cart.add(p);
+        System.out.println("Добавлено в корзину: " + p.getName());
+    }
+
+    // 5. Показать корзину
+    public void showCart() {
+        if (cart.isEmpty()) {
+            System.out.println("Корзина пуста.");
+            return;
+        }
+        System.out.println("В корзине:");
+        for (Product p : cart) System.out.println("  " + p);
+    }
+
+    // 6. Купить
+    public void checkout() {
+        if (cart.isEmpty()) {
+            System.out.println("Корзина пуста — покупать нечего.");
+            return;
+        }
+        double total = 0;
+        System.out.println("Оформление покупки");
+        for (Product p : cart) {
+            System.out.println("  " + p);
+            total += p.getPrice();
+        }
+        System.out.println("Итого: " + total + " руб.");
+        cart.clear();
+        System.out.println("Покупка завершена. Корзина очищена.");
+    }
+}
+
+package shop;
+
+public class User {
+    private String login;
+    private String password;
+
+    public User(String login, String password) {
+        this.login = login;
+        this.password = password;
+    }
+
+    public boolean checkPassword(String pwd) {
+        return this.password.equals(pwd);
+    }
+
+    public String getLogin() { return login; }
+}
