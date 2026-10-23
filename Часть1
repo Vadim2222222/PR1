@@ -1,0 +1,152 @@
+package ru.mirea.pr1;
+
+public class Main {
+    public static void main(String[] args) {
+        // Инициализация массива как в Си
+        int[] array = {5, 12, 8, 3, 19, 7, 14, 6, 10, 2};
+
+        int sum = 0;
+
+        // Цикл for для подсчёта суммы
+        for (int i = 0; i < array.length; i++) {
+            sum += array[i];
+        }
+
+        // Среднее арифметическое
+        double average = (double) sum / array.length;
+
+        // Вывод результатов
+        System.out.println("Сумма элементов массива: " + sum);
+        System.out.println("Среднее арифметическое: " + average);
+    }
+}
+
+package ru.mirea.lab1;
+
+import java.util.Scanner;
+
+public class Task4 {
+    public static void main(String[] args) {
+        // 1. Создаём сканер для чтения с клавиатуры
+        Scanner sc = new Scanner(System.in);
+
+        // 2. Спрашиваем размер массива
+        System.out.print("Введите размер массива: ");
+        int n = sc.nextInt();
+
+        // 3. Создаём массив нужного размера
+        int[] array = new int[n];
+
+        // 4. Читаем элементы массива с клавиатуры
+        System.out.println("Введите " + n + " целых чисел:");
+        for (int i = 0; i < n; i++) {
+            array[i] = sc.nextInt();
+        }
+
+        // 5. Сумма через while
+        int sumWhile = 0;
+        int i = 0;
+        while (i < array.length) {
+            sumWhile += array[i];
+            i++;
+        }
+        System.out.println("Сумма (while): " + sumWhile);
+
+        // 6. Сумма через do while
+        int sumDoWhile = 0;
+        int j = 0;
+        do {
+            sumDoWhile += array[j];
+            j++;
+        } while (j < array.length);
+        System.out.println("Сумма (do while): " + sumDoWhile);
+
+        // 7. Поиск максимума и минимума
+        int max = array[0];
+        int min = array[0];
+        for (int k = 1; k < array.length; k++) {
+            if (array[k] > max) max = array[k];
+            if (array[k] < min) min = array[k];
+        }
+        System.out.println("Максимальный элемент: " + max);
+        System.out.println("Минимальный элемент: " + min);
+
+        // 8. Закрываем сканер
+        sc.close();
+    }
+}
+
+package ru.mirea.pr1;
+
+public class Task5 {
+    public static void main(String[] args) {
+        System.out.println("Аргументы командной строки:");
+        for (int i = 0; i < args.length; i++) {
+            System.out.println("Аргумент " + (i + 1) + ": " + args[i]);
+        }
+
+        // Если аргументов не передали — сообщим об этом
+        if (args.length == 0) {
+            System.out.println("(аргументы не переданы)");
+        }
+    }
+}
+
+package ru.mirea.pr1;
+
+public class Task6 {
+    public static void main(String[] args) {
+        System.out.println("Первые 10 чисел гармонического ряда:");
+        double harmonicSum = 0.0;
+
+        for (int i = 1; i <= 10; i++) {
+            double term = 1.0 / i;       // очередной член ряда
+            harmonicSum += term;          // накапливаем частичную сумму
+
+            System.out.printf(
+                    "H(%2d) = 1/%-2d = %.4f  (частичная сумма: %.4f)%n",
+                    i, i, term, harmonicSum
+            );
+        }
+    }
+}
+
+package ru.mirea.pr1;
+
+import java.util.Scanner;
+
+public class Task7 {
+    // Метод класса для вычисления факториала
+    public static long factorial(int n) {
+        if (n < 0) {
+            throw new IllegalArgumentException(
+                    "Факториал отрицательного числа не определён");
+        }
+        long result = 1;
+        for (int i = 2; i <= n; i++) {
+            result *= i;
+        }
+        return result;
+    }
+
+    // main: проверка работы метода
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // 1. Ввод числа с клавиатуры
+        System.out.print("Введите целое неотрицательное число: ");
+        int n = sc.nextInt();
+
+        // 2. Вызов метода и вывод результата
+        long fact = factorial(n);
+        System.out.println(n + "! = " + fact);
+
+        // 3. Проверка метода для диапазона чисел
+        System.out.println("\nПроверка работы метода:");
+        for (int i = 0; i <= 10; i++) {
+            System.out.println(i + "! = " + factorial(i));
+        }
+
+        sc.close();
+    }
+}
